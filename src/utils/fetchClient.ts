@@ -28,7 +28,11 @@ function request<T>(
 
   // for a demo purpose we emulate a delay to see if Loaders work
   return wait(300)
-    .then(() => fetch(BASE_URL + url, options))
+      .then(() => {
+    console.log('REAL FETCH:', BASE_URL + url);
+
+    return fetch(BASE_URL + url, options);
+  })
     .then(response => response.json());
 }
 
