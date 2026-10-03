@@ -14,6 +14,9 @@ export const PostDetails: React.FC<Props> = ({ post }) => {
   const [isLoadingComments, setIsLoadingComments] = useState(false);
   const [commentsError, setCommentsError] = useState(false);
   const [isFormVisible, setIsFormVisible] = useState(false);
+  const [deleteError, setDeleteError] = useState(false);
+  const [deletingCommentId, setDeletingCommentId] =
+    useState<number | null>(null);
 
   useEffect(() => {
     if (!post) {
@@ -38,11 +41,21 @@ export const PostDetails: React.FC<Props> = ({ post }) => {
   }, [post]);
 
   const handleDeleteComment = (commentId: number) => {
-    setComments(currentComments =>
-      currentComments.filter(comment => comment.id !== commentId),
-    );
+    setDeleteError(false);
+    setDeletingCommentId(commentId);
 
-    deleteComment(commentId).catch(() => {});
+    deleteComment(commentId)
+      .then(() => {
+        setComments(currentComments =>
+          currentComments.filter(comment => comment.id !== commentId),
+        );
+      })
+      .catch(() => {
+        setDeleteError(true);
+      })
+      .finally(() => {
+        setDeletingCommentId(null);
+      });
   };
 
   const handleCommentAdded = (comment: Comment) => {
@@ -65,6 +78,16 @@ export const PostDetails: React.FC<Props> = ({ post }) => {
 
       <div className="block">
         {isLoadingComments && <Loader />}
+
+        {deleteError && (
+          <div
+            className="notification is-danger"
+            role="alert"
+            data-cy="DeleteError"
+          >
+            Unable to delete comment. Please try again.
+          </div>
+        )}
 
         {commentsError && (
           <div className="notification is-danger" data-cy="CommentsError">
@@ -96,6 +119,7 @@ export const PostDetails: React.FC<Props> = ({ post }) => {
                   <button
                     data-cy="CommentDelete"
                     type="button"
+                    disabled={deletingCommentId === comment.id}
                     className="delete is-small"
                     aria-label="delete"
                     onClick={() => handleDeleteComment(comment.id)}

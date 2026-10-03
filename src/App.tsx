@@ -13,7 +13,6 @@ import { User } from './types/User';
 import { Post } from './types/Post';
 import { getUsers } from './utils/users';
 import { getPosts } from './utils/api';
-// import { error } from 'console';
 
 export const App: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
@@ -31,28 +30,26 @@ export const App: React.FC = () => {
       .finally(() => setIsLoadingUsers(false));
   }, []);
 
-useEffect(() => {
-  console.log('SELECTED USER:', selectedUser);
+  useEffect(() => {
+    if (!selectedUser) {
+      setPosts([]);
+      setSelectedPost(null);
 
-  if (!selectedUser) {
+      return;
+    }
+
+    setIsLoadingPosts(true);
+    setPostsError('');
     setPosts([]);
     setSelectedPost(null);
 
-    return;
-  }
-
-  setIsLoadingPosts(true);
-  setPostsError('');
-  setPosts([]);
-  setSelectedPost(null);
-
-  getPosts(selectedUser.id)
-    .then(setPosts)
-    .catch(() => {
-      setPostsError('Something went wrong!');
-    })
-    .finally(() => setIsLoadingPosts(false));
-}, [selectedUser]);
+    getPosts(selectedUser.id)
+      .then(setPosts)
+      .catch(() => {
+        setPostsError('Something went wrong!');
+      })
+      .finally(() => setIsLoadingPosts(false));
+  }, [selectedUser]);
 
   const showNoPosts =
     selectedUser && !isLoadingPosts && !postsError && posts.length === 0;
@@ -100,10 +97,10 @@ useEffect(() => {
 
                 {showPosts && (
                   <PostsList
-                  posts={posts}
-                  onSelectPost={setSelectedPost}
-                  selectedPost={selectedPost}
-                />
+                    posts={posts}
+                    onSelectPost={setSelectedPost}
+                    selectedPost={selectedPost}
+                  />
                 )}
               </div>
             </div>

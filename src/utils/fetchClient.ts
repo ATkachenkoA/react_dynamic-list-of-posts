@@ -28,12 +28,14 @@ function request<T>(
 
   // for a demo purpose we emulate a delay to see if Loaders work
   return wait(300)
-      .then(() => {
-    console.log('REAL FETCH:', BASE_URL + url);
+    .then(() => fetch(BASE_URL + url, options))
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Request failed');
+      }
 
-    return fetch(BASE_URL + url, options);
-  })
-    .then(response => response.json());
+      return response.json();
+    });
 }
 
 export const client = {

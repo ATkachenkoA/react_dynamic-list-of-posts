@@ -17,6 +17,7 @@ export const NewCommentForm: React.FC<Props> = ({ postId, onCommentAdded }) => {
   const [bodyError, setBodyError] = useState(false);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState('');
 
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
@@ -43,6 +44,10 @@ export const NewCommentForm: React.FC<Props> = ({ postId, onCommentAdded }) => {
       .then(comment => {
         onCommentAdded(comment);
         setBody('');
+        setSubmitError('');
+      })
+      .catch(() => {
+        setSubmitError('Unable to add comment. Please try again.');
       })
       .finally(() => {
         setIsSubmitting(false);
@@ -86,10 +91,8 @@ export const NewCommentForm: React.FC<Props> = ({ postId, onCommentAdded }) => {
           )}
 
           {nameError && (
-            <p
-              className="help is-danger"
-              data-cy="ErrorMessage">
-                Name is required
+            <p className="help is-danger" data-cy="ErrorMessage">
+              Name is required
             </p>
           )}
         </div>
@@ -120,11 +123,8 @@ export const NewCommentForm: React.FC<Props> = ({ postId, onCommentAdded }) => {
           )}
 
           {emailError && (
-            <p
-              className="help is-danger"
-              data-cy="ErrorMessage"
-            >
-                Email is required
+            <p className="help is-danger" data-cy="ErrorMessage">
+              Email is required
             </p>
           )}
         </div>
@@ -147,15 +147,22 @@ export const NewCommentForm: React.FC<Props> = ({ postId, onCommentAdded }) => {
             }}
           />
           {bodyError && (
-            <p
-              className="help is-danger"
-              data-cy="ErrorMessage"
-            >
+            <p className="help is-danger" data-cy="ErrorMessage">
               Comment is required
             </p>
           )}
         </div>
       </div>
+
+      {submitError && (
+        <div
+          className="notification is-danger"
+          role="alert"
+          data-cy="SubmitError"
+        >
+          {submitError}
+        </div>
+      )}
 
       <div className="field is-grouped">
         <div className="control">

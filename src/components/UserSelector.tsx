@@ -16,21 +16,21 @@ export const UserSelector: React.FC<Props> = ({
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-  const handleClickOutside = (event: MouseEvent) => {
-    if (
-      dropdownRef.current &&
-      !dropdownRef.current.contains(event.target as Node)
-    ) {
-      setIsOpen(false);
-    }
-  };
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsOpen(false);
+      }
+    };
 
-  document.addEventListener('click', handleClickOutside);
+    document.addEventListener('click', handleClickOutside);
 
-  return () => {
-    document.removeEventListener('click', handleClickOutside);
-  };
-}, []);
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, []);
 
   return (
     <div
@@ -60,8 +60,8 @@ export const UserSelector: React.FC<Props> = ({
             <a
               href={`#user-${user.id}`}
               className={`dropdown-item ${
-  selectedUser?.id === user.id ? 'is-active' : ''
-}`}
+                selectedUser?.id === user.id ? 'is-active' : ''
+              }`}
               key={user.id}
               onClick={() => {
                 onSelectUser(user);
